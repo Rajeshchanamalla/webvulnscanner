@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scan Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function updateProgressAndResults() {
+            fetch('/progress').then(resp => resp.json()).then(data => {
+                document.getElementById('progress').innerText = data.progress + '%';
+                // Fetch results dynamically
+                fetch('/results').then(resp => resp.text()).then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newTable = doc.querySelector('table');
+                    document.querySelector('table').innerHTML = newTable.innerHTML;
+                    if (data.progress < 100) {
+                        setTimeout(updateProgressAndResults, 1000);
+                    }
+                });
+            });
+        }
+        function stopScan() {
+            fetch('/stop', { method: 'POST' }).then(resp => resp.json()).then(data => {
+                alert(data.status);
+                window.location.href = '/';
+            });
+        }
+        window.onload = updateProgressAndResults;
+    </script>
+</head>
+<body>
+    <h1>Scan Progress: <span id="progress">0%</span></h1>
+    <button onclick="stopScan()">Stop Scan</button>
+    <h2>Results:</h2>
+    <table>
+        <tr><th>URL</th><th>Type</th><th>Payload</th><th>Evidence</th><th>Severity</th><th>Location</th><th>Rating (0-10)</th></tr>
+        {% for r in results %}
+        <tr><td>{{ r.url }}</td><td>{{ r.type }}</td><td>{{ r.payload }}</td><td>{{ r.evidence }}</td><td>{{ r.severity }}</td><td>{{ r.location }}</td><td>{{ r.rating }}</td></tr>
+        {% endfor %}
+    </table>
+    <a href="/report/html">Download HTML Report</a>
+    <a href="/report/pdf">Download PDF Report</a>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scan Report for {{ target }}</title>
+</head>
+<body>
+    <h1>Vulnerability Report for {{ target }} (OWASP Top 10 2021)</h1>
+    {% for vuln, items in results.items() %}
+    <h2>{{ vuln }}</h2>
+    <table border="1">
+        <tr><th>URL</th><th>Payload</th><th>Evidence</th><th>Severity</th><th>Location</th><th>Rating (0-10)</th><th>CVSS</th><th>Description</th><th>Exploitation</th><th>Remediation</th></tr>
+        {% for item in items %}
+        <tr><td>{{ item.url }}</td><td>{{ item.payload }}</td><td>{{ item.evidence }}</td><td>{{ item.severity }}</td><td>{{ item.location }}</td><td>{{ item.rating }}</td><td>{{ item.cvss }}</td><td>{{ item.description }}</td><td>{{ item.exploitation }}</td><td>{{ item.remediation }}</td></tr>
+        {% endfor %}
+    </table>
+    {% endfor %}
+</body>
+</html>

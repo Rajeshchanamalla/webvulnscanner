@@ -1,0 +1,8 @@
+requests
+beautifulsoup4
+flask
+jinja2
+pdfkit
+colorama
+pandas
+urllib3
